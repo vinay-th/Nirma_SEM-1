@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vinay Thakor - Resume</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 40px;
+      }
+
+      header {
+        border-bottom: 2px solid #333;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        display: flex;
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      .contact {
+        text-align: left;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .profile-pic {
+        height: 100px;
+      }
+
+      .contact-info {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .contact-info span {
+        margin-right: 20px;
+      }
+
+      section {
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 8px;
+      }
+
+      .job,
+      .education-item,
+      .project {
+        margin-bottom: 20px;
+      }
+
+      .job-title {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .job-company {
+        color: #555;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .job-date {
+        color: #888;
+        font-size: 13px;
+        float: right;
+      }
+
+      ul {
+        margin-left: 20px;
+        margin-top: 8px;
+      }
+
+      li {
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      .education-item h3 {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 3px;
+      }
+
+      .education-item p {
+        font-size: 13px;
+        color: #666;
+      }
+
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        font-size: 14px;
+      }
+
+      .skill-category {
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-left: 3px solid #333;
+      }
+
+      .skill-category strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .projects-container {
+        margin-top: 30px;
+        display: flex;
+      }
+
+      .navigation-iframe {
+        width: 30%;
+      }
+
+      .project-iframe {
+        width: 70%;
+      }
+
+      .summary {
+        font-size: 14px;
+        line-height: 1.8;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="title">
+        <div className="contact">
+          <h1>Vinay Thakor</h1>
+          <div class="contact-info">
+            <span>Ahmedabad</span>
+            <span>vinay-th.tech</span>
+            <span>vinay.th.24@gmail.com</span>
+          </div>
+        </div>
+        <div className="profile">
+          <img src="vinay.png" alt="vinay" class="profile-pic" />
+        </div>
+      </header>
+
+      <section>
+        <h2>Summary</h2>
+        <p class="summary">
+          Talented, ambitious, and hardworking developer with strong skills in
+          web development, blockchain research, problem-solving, and project
+          management. A confident Research Intern with proven leadership
+          abilities, detail-oriented approach, and constant drive to learn,
+          grow, and deliver high-quality work.
+        </p>
+      </section>
+
+      <section>
+        <h2>Work Experience</h2>
+
+        <div class="job">
+          <div class="job-title">
+            Research Intern <span class="job-date">Jan 2026 - Mar 2026</span>
+          </div>
+          <div class="job-company">GUNI WSRIP (Ahmedabad)</div>
+          <ul>
+            <li>
+              Designed a privacy-preserving system architecture using smart
+              contracts and zero-knowledge proofs
+            </li>
+            <li>
+              Studied world green hydrogen ecosystems to identify trust,
+              certification, and scalability gaps
+            </li>
+            <li>
+              Authored a research paper on a blockchain + ZKP based framework
+              for verifiable green hydrogen certification
+            </li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-title">
+            Research Intern <span class="job-date">Mar 2025 - May 2025</span>
+          </div>
+          <div class="job-company">GUNI SSRP (Ahmedabad)</div>
+          <ul>
+            <li>
+              Researched and developed Metanest, a smart, human-first Web3
+              wallet DApp
+            </li>
+            <li>
+              Designed core wallet architecture and user experience with
+              usability-first principles
+            </li>
+            <li>
+              Conducted and co-authored 2-month research project on secure and
+              accessible Web3 interactions
+            </li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-title">
+            Full Stack Intern <span class="job-date">Jan 2025 - Mar 2025</span>
+          </div>
+          <div class="job-company">Aigentora.ai (Ahmedabad)</div>
+          <ul>
+            <li>Worked as a Full Stack Developer Intern</li>
+            <li>Contributing to the development of their website</li>
+            <li>Experienced working under a team</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Education</h2>
+
+        <div class="education-item">
+          <h3>B.Sc. IT</h3>
+          <p>GLS University Ahmedabad (2023 - 2026)</p>
+        </div>
+
+        <div class="education-item">
+          <h3>MCA</h3>
+          <p>Nirma University Ahmedabad (2026 - 2028)</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Skills</h2>
+
+        <div class="skills-grid">
+          <div class="skill-category">
+            <strong>Frontend Development</strong>
+            React, Next.js
+          </div>
+          <div class="skill-category">
+            <strong>Backend Development</strong>
+            Java
+          </div>
+          <div class="skill-category">
+            <strong>Programming Language</strong>
+            TypeScript
+          </div>
+          <div class="skill-category">
+            <strong>Blockchain Development</strong>
+            Solidity
+          </div>
+          <div class="skill-category">
+            <strong>Software Architecture</strong>
+            System Design
+          </div>
+          <div class="skill-category">
+            <strong>Research & Analysis</strong>
+            Technical Research
+          </div>
+          <div class="skill-category">
+            <strong>Collaboration</strong>
+            Team Leadership
+          </div>
+          <div class="skill-category">
+            <strong>Problem Solving</strong>
+            Analytical Thinking
+          </div>
+        </div>
+      </section>
+
+      <h2>Projects</h2>
+      <div class="projects-container">
+        <iframe
+          src="navigation.html"
+          title="Navigation"
+          width="100%"
+          height="200px"
+          style="border: none"
+          class="navigation-iframe"
+        ></iframe>
+        <iframe
+          src="proj-1.html"
+          title="Project 1"
+          name="content"
+          width="100%"
+          height="400px"
+          style="border: none"
+          class="project-iframe"
+        ></iframe>
+      </div>
+    </div>
+  </body>
+</html>
