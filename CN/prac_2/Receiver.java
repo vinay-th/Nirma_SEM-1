@@ -40,8 +40,7 @@ public class Receiver {
                 String unstuffedPayload = bitUnstuff(payload);
                 System.out.println("Unstuffed payload: " + unstuffedPayload);
 
-                String data = FLAG + HEADER + unstuffedPayload + TRAILER + FLAG;
-                Files.write(Paths.get("data.txt"), data.getBytes());
+                Files.write(Paths.get("data.txt"), unstuffedPayload.getBytes());
                 System.out.println("Original data written to data.txt");
             } else {
                 System.out.println("Invalid frame received.");
