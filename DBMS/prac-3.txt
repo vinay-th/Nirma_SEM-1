@@ -1,0 +1,362 @@
+-- 1 
+CREATE VIEW sp AS SELECT * FROM salespeople WHERE CITY = 'Surat';
+View created.
+
+SELECT * FROM sp;
+    SNUM SNAME                CITY                 COMM
+--------- -------------------- --------------- ---------
+    110 Sita Mehta           Surat                4.95
+
+-- 2
+CREATE VIEW sp_1 AS SELECT snum,sname,city FROM salespeople;
+view created.
+
+SELECT * FROM sp_1;
+SNUM SNAME                CITY
+---- -------------------- ---------------
+ 101 Rahul Sharma         Mumbai
+ 102 Anita Patel          Delhi
+ 103 Sanjay Kumar         Bangalore
+ 104 Neha Gupta           Hyderabad
+ 105 Amit Joshi           Ahmedabad
+ 106 Priya Reddy          Chennai
+ 107 Karan Verma          Kolkata
+ 108 Rashmi Nair          Pune
+ 109 Manoj Singh          Jaipur
+ 110 Sita Mehta           Surat
+
+-- 3
+CREATE VIEW sp_2 AS SELECT snum,sname,city FROM salespeople WHERE city = 'New York';
+view created.
+
+SELECT * FROM sp_2;
+ws selected
+
+-- 4
+CREATE VIEW sp_3 AS SELECT city, COUNT(*) AS cnum FROM customer GROUP BY city;
+view created.
+
+SELECT * FROM sp_3;
+CITY                 CNUM
+--------------- ---------
+Bhopal                  1
+Ahmedabad               2
+Jaipur                  1
+Bengaluru               1
+Delhi                   1
+Patna                   1
+Ankleshwar              1
+Mumbai                  1
+Kolkata                 1
+Lucknow                 1
+Bhubaneswar             1
+Guwahati                1
+Hyderabad               1
+Nagpur                  1
+Surat                   1
+Coimbatore              1
+Chennai                 1
+Pune                    1
+Indore                  1
+
+19 rows selected.
+
+-- 5
+CREATE VIEW sp_4 AS 
+SELECT odate, COUNT(DISTINCT cnum) AS unique_customers, 
+AVG(amt) AS avg_purchase_amt, 
+SUM(amt) AS total_purchase_amt FROM orders GROUP BY odate;
+
+view created.
+
+SELECT * FROM sp_4;
+ODATE     UNIQUE_CUSTOMERS AVG_PURCHASE_AMT TOTAL_PURCHASE_AMT
+--------- ---------------- ---------------- ------------------
+15-FEB-03                1             1800               1800
+14-FEB-04                1             1500               1500
+18-APR-05                1              950                950
+20-JUN-05                1             1150               1150
+02-JAN-06                1              950                950
+30-APR-06                1             1400               1400
+02-JUL-06                1             1350               1350
+10-MAR-07                1              800                800
+12-MAY-07                1             1600               1600
+15-JUL-07                1             1550               1550
+22-MAR-08                1             1100               1100
+25-MAY-08                1              700                700
+05-APR-09                1             1300               1300
+07-JUN-09                1              950                950
+15-FEB-10                1             1200               1200
+
+15 rows selected.
+
+-- 6
+CREATE VIEW view_sp5 AS
+SELECT o.onum, o.amt, s.snum,
+s.sname AS salesperson_name,
+c.cname AS customer_name
+FROM orders o JOIN salespeople s ON o.snum = s.snum JOIN customer c ON o.cnum = c.cnum;
+
+view created.
+
+SELECT * FROM view_sp5;
+     ONUM        AMT      SNUM SALESPERSON_NAME     CUSTOMER_NAME
+---------- ---------- --------- -------------------- --------------------
+      3001       1800       110 Sita Mehta           Gopal Krishnan
+      3002       1500       101 Rahul Sharma         Meena Pillai
+      3003        950       102 Anita Patel          Arjun Mehta
+      3004       1150       103 Sanjay Kumar         Farah Khan
+      3005        950       104 Neha Gupta           Ravi Kapoor
+      3006       1400       105 Amit Joshi           Rajesh Thakur
+      3007       1350       106 Priya Reddy          Sanjana Iyer
+      3008        800       107 Karan Verma          Suresh Naidu
+      3009       1600       108 Rashmi Nair          Ashok Verma
+      3010       1550       109 Manoj Singh          Sunita Rao
+      3011       1100       110 Sita Mehta           Gopal Krishnan
+      3012        700       105 Amit Joshi           Deepak Rana
+      3013       1300       104 Neha Gupta           Kavita Joshi
+      3014        950       107 Karan Verma          Pooja Chawla
+      3015       1200       105 Amit Joshi           Ramesh Iyer
+
+15 rows selected.
+
+-- 7
+CREATE VIEW sp7 AS
+SELECT
+    o.odate,
+    s.snum,
+    s.sname
+FROM
+    orders o
+JOIN
+    salespeople s ON o.snum = s.snum
+WHERE
+    o.amt = (
+        SELECT MAX(o2.amt)
+        FROM orders o2
+        WHERE o2.odate = o.odate
+    );
+
+view created.
+
+SELECT * FROM sp7;
+ODATE          SNUM SNAME
+--------- --------- --------------------
+15-FEB-03       110 Sita Mehta
+14-FEB-04       101 Rahul Sharma
+18-APR-05       102 Anita Patel
+20-JUN-05       103 Sanjay Kumar
+02-JAN-06       104 Neha Gupta
+30-APR-06       105 Amit Joshi
+02-JUL-06       106 Priya Reddy
+10-MAR-07       107 Karan Verma
+12-MAY-07       108 Rashmi Nair
+15-JUL-07       109 Manoj Singh
+22-MAR-08       110 Sita Mehta
+25-MAY-08       105 Amit Joshi
+05-APR-09       104 Neha Gupta
+07-JUN-09       107 Karan Verma
+15-FEB-10       105 Amit Joshi
+
+15 rows selected.
+
+-- 8
+CREATE VIEW sp8 AS
+SELECT
+    s.snum,
+    s.sname
+FROM
+    salespeople s
+JOIN
+    orders o ON s.snum = o.snum
+JOIN
+    customer c ON o.cnum = c.cnum
+WHERE
+    o.amt = (
+        SELECT MAX(o2.amt)
+        FROM orders o2
+        WHERE o2.odate = o.odate
+    )
+GROUP BY
+    s.snum, s.sname
+HAVING
+    COUNT(o.onum) >= 3;
+
+view created.
+
+SELECT * FROM sp8;
+     SNUM SNAME
+--------- --------------------
+      105 Amit Joshi
+
+1 row selected.
+
+-- 9
+CREATE VIEW sp9 AS
+SELECT *
+FROM customer
+WHERE grade = (SELECT MAX(rating) FROM customer);
+
+view created.
+
+SELECT * FROM sp9;
+CNUM  CNAME                CITY               RATING      SNUM
+----- -------------------- --------------- --------- ---------
+C001  Ramesh Iyer          Bhopal                300       105
+C004  Sunita Rao           Jaipur                300       109
+C007  Kavita Joshi         Patna                 300       104
+C010  Suresh Naidu         Kolkata               300       107
+C013  Pooja Chawla         Guwahati              300       107
+C016  Gopal Krishnan       Surat                 300       110
+C019  Ashok Verma          Pune                  300       108
+
+7 rows selected.
+
+-- 10
+CREATE VIEW salespeople_count_by_city AS
+SELECT city, COUNT(*) AS number_of_salespersons
+FROM salespeople
+GROUP BY city;
+
+view created.
+
+SELECT * FROM salespeople_count_by_city;
+CITY            NUMBER_OF_SALESPERSONS
+--------------- ----------------------
+Mumbai                               1
+Delhi                                1
+Bangalore                            1
+Hyderabad                            1
+Ahmedabad                            1
+Chennai                              1
+Kolkata                              1
+Pune                                 1
+Jaipur                               1
+Surat                                1
+
+10 rows selected.
+
+-- 11
+CREATE VIEW salesperson_purchase_summary AS
+SELECT s.sname,
+       AVG(o.amt) AS average_purchase_amount,
+       SUM(o.amt) AS total_purchase_amount
+FROM salespeople s
+JOIN orders o ON s.snum = o.snum
+GROUP BY s.sname;
+
+view created.
+
+SELECT * FROM salesperson_purchase_summary;
+SNAME                AVERAGE_PURCHASE_AMOUNT TOTAL_PURCHASE_AMOUNT
+-------------------- ----------------------- ----------------------
+Rahul Sharma                            1500                   1500
+Anita Patel                              950                    950
+Sanjay Kumar                            1150                   1150
+Neha Gupta                              1125                   2250
+Amit Joshi                              1100                   3300
+Priya Reddy                             1350                   1350
+Karan Verma                              875                   1750
+Rashmi Nair                             1600                   1600
+Manoj Singh                             1550                   1550
+Sita Mehta                              1450                   2900
+
+10 rows selected.
+
+-- 12
+CREATE VIEW Salespeople_Multiple_Clients AS
+SELECT s.snum, s.sname
+FROM salespeople s JOIN customer c ON s.snum = c.snum GROUP BY s.snum, s.sname, s.city
+HAVING COUNT(DISTINCT c.cnum) > 1;
+
+view created.
+
+SELECT * FROM Salespeople_Multiple_Clients;
+     SNUM SNAME
+--------- --------------------
+      102 Anita Patel
+      103 Sanjay Kumar
+      104 Neha Gupta
+      105 Amit Joshi
+      106 Priya Reddy
+      107 Karan Verma
+      110 Sita Mehta
+
+7 rows selected.
+
+-- 13
+CREATE VIEW sp13 AS
+SELECT c.cnum, s.snum
+FROM salespeople s
+JOIN customer c ON s.snum = c.snum
+WHERE s.city = c.city;
+
+view created.
+
+SELECT * FROM sp13;
+CNUM      SNUM
+----- ---------
+C002        105
+C003        105
+C004        109
+C006        102
+C009        101
+C010        107
+C014        104
+C016        110
+C018        106
+C019        108
+
+10 rows selected.
+
+-- 14
+CREATE VIEW Orders_Per_Day AS
+SELECT odate, COUNT(onum) AS number_of_orders
+FROM orders
+GROUP BY odate;
+
+view created.
+
+SELECT * FROM Orders_Per_Day;
+ODATE     NUMBER_OF_ORDERS
+--------- ----------------
+15-FEB-03                1
+14-FEB-04                1
+18-APR-05                1
+20-JUN-05                1
+02-JAN-06                1
+30-APR-06                1
+02-JUL-06                1
+10-MAR-07                1
+12-MAY-07                1
+15-JUL-07                1
+22-MAR-08                1
+25-MAY-08                1
+05-APR-09                1
+07-JUN-09                1
+15-FEB-10                1
+
+15 rows selected.
+
+-- 15
+CREATE OR REPLACE VIEW Salespeople_Orders AS
+SELECT s.snum, s.sname
+FROM salespeople s
+JOIN orders o ON s.snum = o.snum
+WHERE o.odate = '24-Jan-23';
+
+view created.
+
+SELECT * FROM Salespeople_Orders;
+no rows selected
+
+-- 16
+CREATE VIEW sp16 AS
+SELECT snum, onum, cnum
+FROM orders
+WHERE odate IN (TO_DATE('2012-08-17', 'YYYY-MM-DD'), TO_DATE('2012-10-10', 'YYYY-MM-DD'));
+
+view created.
+
+SELECT * FROM sp16;
+no rows selected
