@@ -1,0 +1,4 @@
+Emp_ID|Emp_Name|Designation|Department|Salary|Age
+101|Amit|Developer|HR|40000|25
+102|Neha|Analyst|Finance|45000|26
+103|Rahul|Manager|IT|50000|28

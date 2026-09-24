@@ -5,7 +5,7 @@ CREATE TABLE SALESPEOPLE(SNUM NUMBER(4) PRIMARY KEY,SNAME VARCHAR2(20),CITY VARC
 INSERT INTO salespeople VALUES (101, 'Vinay Thakor','Ahmedabad',5.00);
 INSERT INTO salespeople VALUES (102, 'Dhyey Chaudhry','Dubai',4.75);
 INSERT INTO salespeople VALUES (103, 'Umang Panchal','Bangalore', 5.20);
-INSERT INTO salespeople VALUES (104, 'Vinay Thakor', 'Hyderabad', 4.90);
+INSERT INTO salespeople VALUES (104, 'Mohit Pandey', 'Hyderabad', 4.90);
 INSERT INTO salespeople VALUES (105, 'Dhruv Jayswal', 'Ahmedabad', 5.10);
 INSERT INTO salespeople VALUES (106, 'Riya Patel', 'Baroda', 5.05);
 INSERT INTO salespeople VALUES (107, 'Darji Smit', 'Kolkata', 4.80);
