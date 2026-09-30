@@ -1,0 +1,32 @@
+-- 1. Write a SQL statement to find the total purchase amount of all orders.
+SELECT SUM(amt) FROM orders;
+
+-- 2. Write a SQL statement to find the average purchase amount of all orders.
+SELECT AVG(amt) FROM orders;
+
+-- 3. Write a SQL statement to find the number of salesmen currently listing for all their customers.
+SELECT COUNT(DISTINCT snum) FROM orders;
+
+-- 4. Write a SQL statement to know how many customers have listed their names.
+SELECT COUNT(cname) FROM customer;
+
+-- 5. Write a SQL statement to find the number of customers who get at least a rating for his/her performance.
+SELECT COUNT(rating) FROM customer WHERE rating IS NOT NULL;
+
+-- 6. Write a SQL statement to know the maximum and minimum purchase amount of all the orders.
+SELECT MAX(amt), MIN(amt) FROM orders;
+
+-- 7. Write a SQL statement that selects the highest grade for each of the cities of the customers.
+SELECT city, MAX(rating) FROM customer GROUP BY city;
+
+-- 8. Write a SQL statement to find the highest purchase amount ordered by each customer with their ID and highest purchase amount.
+SELECT cnum, MAX(amt) FROM orders GROUP BY cnum;
+
+-- 9. Write a SQL statement to find the highest purchase amount ordered by each customer on a particular date with their ID, order date, and highest purchase amount.
+SELECT cnum, odate, MAX(amt) FROM orders GROUP BY cnum, odate;
+
+-- 10. Write a SQL statement to find the highest purchase amount on the date '01-JAN-06' for each salesman with their ID.
+SELECT snum, MAX(amt) FROM orders WHERE odate = '01-JAN-06' GROUP BY snum;
+
+-- 11. Write a SQL statement to find the highest purchase amount with their ID and order date, for only those customers who have the highest purchase amount in a day is more than 100.
+SELECT cnum, odate, MAX(amt) FROM orders GROUP BY cnum, odate HAVING MAX(amt) > 100;

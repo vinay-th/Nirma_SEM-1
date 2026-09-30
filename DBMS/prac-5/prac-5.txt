@@ -1,0 +1,44 @@
+-- Minimum Number from given 2 numbers
+
+SQL> DECLARE
+num1 NUMBER := 10;
+num2 NUMBER := 20;
+min_value NUMBER;
+PROCEDURE find_min(num1 IN NUMBER, num2 IN NUMBER, min OUT NUMBER) IS
+BEGIN
+    IF num1 < num2 THEN
+        min := num1;
+    ELSE
+        min := num2;
+    END IF;
+END find_min;
+BEGIN
+    find_min(num1, num2, min_value);
+    DBMS_OUTPUT.PUT_LINE('The minimum value is: ' || min_value);
+END;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17
+The minimum value is: 10
+
+PL/SQL procedure successfully completed.
+
+
+-- Perimeter of a rectangle
+
+SQL> DECLARE
+length NUMBER := 10;
+width NUMBER := 5;
+perimeter NUMBER;
+PROCEDURE calc_perimeter(length IN NUMBER, width IN NUMBER, perimeter OUT NUMBER) IS
+BEGIN
+    perimeter := 2 * (length + width);
+END calc_perimeter;
+BEGIN
+    calc_perimeter(lengt  2  h, width, perimeter);
+    DBMS_OUTPUT.PUT_LINE('The perimeter is: ' || perimeter);
+END;
+/  3    4    5    6    7    8    9   10   11   12   13
+The perimeter is: 30
+
+PL/SQL procedure successfully completed.
+
+SQL>
