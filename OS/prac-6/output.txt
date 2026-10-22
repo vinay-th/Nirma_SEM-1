@@ -1,0 +1,47 @@
+#!/bin/bash
+# a) Write a shell script to print the reverse of an input number (do not use REV command
+
+read -p "Enter a number: " num
+
+reverse=0
+rem=0
+
+while [ $num -gt 0 ]
+do
+    rem=$((num % 10))
+    reverse=$((reverse * 10 + rem))
+    num=$((num / 10))
+done
+
+echo "The reverse of the number is: $reverse"#!/bin/bash
+# b) Write a shell script to validate the following inputs
+# I. Email ID
+# II. URL
+
+read -p "Enter an Email ID: " email
+read -p "Enter a URL: " url
+
+if [[ $email =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+    echo "Valid Email ID"
+else
+    echo "Invalid Email ID"
+fi
+
+if [[ $url =~ ^(https)://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$ ]]; then
+    echo "Valid URL"
+else
+    echo "Invalid URL"
+fi#!/bin/bash
+# c) Write a shell script to concatenate all the given files into a single 7file
+
+read -p "Enter the names of files (space-separated): " files
+
+for file in $files; do
+    if [[ -f $file ]]; then
+        cat "$file" >> output.txt
+    else
+        echo "File '$file' does not exist."
+    fi
+done
+
+echo "All files have been concatenated into output.txt"

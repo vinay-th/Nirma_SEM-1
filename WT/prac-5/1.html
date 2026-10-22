@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RedMail Interface</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f6f8fc;
+        color: #444;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        background-color: #f6f8fc;
+      }
+      .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 22px;
+        color: #5f6368;
+      }
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #d32f2f;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+      .search-bar {
+        flex: 1;
+        max-width: 650px;
+        background-color: #eaf1fb;
+        padding: 12px 20px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+      }
+      .search-bar input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        font-size: 16px;
+        color: #333;
+      }
+      .user-area {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #b71c1c;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .main-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+      aside {
+        width: 250px;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .compose-btn {
+        background-color: #c2e7ff;
+        border: none;
+        padding: 15px 20px;
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 0 15px 15px;
+        width: 140px;
+        color: #001d35;
+      }
+      .compose-btn:hover {
+        background-color: #b0d9f4;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      nav a {
+        display: block;
+        padding: 10px 20px 10px 30px;
+        text-decoration: none;
+        color: #444;
+        border-radius: 0 20px 20px 0;
+        margin-right: 15px;
+      }
+      nav a.active {
+        background-color: #fce4e4;
+        color: #d32f2f;
+        font-weight: bold;
+      }
+      nav a:hover:not(.active) {
+        background-color: #e5e7eb;
+      }
+      main {
+        flex: 1;
+        background-color: white;
+        border-radius: 16px 16px 0 0;
+        margin-right: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+      .toolbar {
+        padding: 10px 20px;
+        border-bottom: 1px solid #f1f3f4;
+        display: flex;
+        gap: 15px;
+      }
+      .toolbar-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #5f6368;
+        font-size: 16px;
+        padding: 5px;
+      }
+      .email-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+      .email-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-bottom: 1px solid #f1f3f4;
+        cursor: pointer;
+      }
+      .email-row:hover {
+        box-shadow:
+          inset 1px 0 0 #dadce0,
+          inset -1px 0 0 #dadce0,
+          0 1px 2px 0 rgba(60, 64, 67, 0.3);
+        border-bottom-color: transparent;
+      }
+      .email-row.unread {
+        background-color: #f4f7fc;
+        font-weight: bold;
+      }
+      .email-row.unread .email-sender {
+        color: #d32f2f;
+      }
+      .email-checkbox {
+        margin-right: 15px;
+        cursor: pointer;
+      }
+      .email-sender {
+        width: 200px;
+        color: #202124;
+      }
+      .email-content {
+        flex: 1;
+        color: #202124;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .email-snippet {
+        color: #5f6368;
+        font-weight: normal;
+      }
+      .email-date {
+        width: 100px;
+        text-align: right;
+        font-size: 12px;
+        color: #5f6368;
+      }
+      .email-row.unread .email-date {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo-area">
+        <div class="logo-icon">M</div>
+        <span>RedMail</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search mail" />
+      </div>
+      <div class="user-area">
+        <div class="user-avatar">U</div>
+      </div>
+    </header>
+    <div class="main-container">
+      <aside>
+        <button class="compose-btn">Compose</button>
+        <nav>
+          <a href="#" class="active">Inbox</a>
+          <a href="#">Starred</a>
+          <a href="#">Snoozed</a>
+          <a href="#">Sent</a>
+          <a href="#">Drafts</a>
+        </nav>
+      </aside>
+      <main>
+        <div class="toolbar">
+          <input type="checkbox" class="toolbar-btn" />
+          <button class="toolbar-btn">↻</button>
+          <button class="toolbar-btn">⋮</button>
+        </div>
+        <div class="email-list">
+          <div class="email-row unread">
+            <input type="checkbox" class="email-checkbox" />
+            <div class="email-sender">abc</div>
+            <div class="email-content">
+              xyz <span class="email-snippet">- mail data</span>
+            </div>
+            <div class="email-date">10:42 AM</div>
+          </div>
+          <div class="email-row">
+            <input type="checkbox" class="email-checkbox" />
+            <div class="email-sender">abc</div>
+            <div class="email-content">
+              xyz <span class="email-snippet">- mail data</span>
+            </div>
+            <div class="email-date">9:15 AM</div>
+          </div>
+          <div class="email-row">
+            <input type="checkbox" class="email-checkbox" />
+            <div class="email-sender">abc</div>
+            <div class="email-content">
+              xyz <span class="email-snippet">- mail data</span>
+            </div>
+            <div class="email-date">Yesterday</div>
+          </div>
+          <div class="email-row">
+            <input type="checkbox" class="email-checkbox" />
+            <div class="email-sender">abc</div>
+            <div class="email-content">
+              xyz <span class="email-snippet">- mail data</span>
+            </div>
+            <div class="email-date">Oct 19</div>
+          </div>
+          <div class="email-row">
+            <input type="checkbox" class="email-checkbox" />
+            <div class="email-sender">abc</div>
+            <div class="email-content">
+              xyz <span class="email-snippet">- mail data</span>
+            </div>
+            <div class="email-date">Oct 18</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
