@@ -1,0 +1,36 @@
+<!-- JavaScript Concepts:
+1.	Write a script that perform arithmetic operations on two numbers.
+2.	Write a script to find given number is even or odd.
+3.	Write a script to find factorial of given number.
+4.	Write a Javascript code segment that creates table as shown below using nested for loop.
+Use table width="240px" and take 30px as cell height and width. -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chess Board</title>
+    <script>
+      document.write(
+        "<table border='1' width='240px' cellspacing='0' cellpadding='0' height='240px'>"
+      );
+      for (var i = 0; i < 8; i++) {
+        document.write('<tr>');
+        for (var j = 0; j < 8; j++) {
+          if ((i + j) % 2 === 0) {
+            document.write(
+              "<td style='background-color: black; width: 30px; height: 30px;'></td>"
+            );
+          } else {
+            document.write(
+              "<td style='background-color: white; width: 30px; height: 30px;'></td>"
+            );
+          }
+        }
+        document.write('</tr>');
+      }
+    </script>
+  </head>
+  <body></body>
+</html>
