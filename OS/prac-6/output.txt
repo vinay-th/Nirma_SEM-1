@@ -90,4 +90,42 @@ for file in $files; do
     fi
 done
 
-echo "All files have been concatenated into output.txt"
+echo "All files have been concatenated into output.txt"#!/bin/bash
+# a) Write a shell script to print the reverse of an input number (do not use REV command
+
+read -p "Enter a number: " num
+
+reverse=0
+rem=0
+
+while [ $num -gt 0 ]
+do
+    rem=$((num % 10))
+
+    if [ $rem -eq 0 ]; then
+        reverse=$((reverse * 10))
+    else
+        reverse=$((reverse * 10 + rem))
+    fi
+    num=$((num / 10))
+done
+
+echo "The reverse of the number is: $reverse"#!/bin/bash
+# b) Write a shell script to validate the following inputs
+# I. Email ID
+# II. URL
+
+read -p "Enter an Email ID: " email
+read -p "Enter a URL: " url
+
+if [[ $email =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+    echo "Valid Email ID"
+else
+    echo "Invalid Email ID"
+fi
+
+if [[ $url =~ ^(https)://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$ ]]; then
+    echo "Valid URL"
+else
+    echo "Invalid URL"
+fi

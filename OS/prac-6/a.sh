@@ -9,7 +9,12 @@ rem=0
 while [ $num -gt 0 ]
 do
     rem=$((num % 10))
-    reverse=$((reverse * 10 + rem))
+
+    if [ $rem -eq 0 ]; then
+        reverse=$((reverse * 10))
+    else
+        reverse=$((reverse * 10 + rem))
+    fi
     num=$((num / 10))
 done
 
