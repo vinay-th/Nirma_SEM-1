@@ -1,24 +1,41 @@
+<!-- C.	Implement the CSS transition on grey colored rectangle division. Once take mouse over the division, perform following effects on division:
+i.	Create border using box shadow concept
+ii.	Change shape to ellipse 
+iii.	Change background color to red
+iv.	Use media query for screen and print -->
+
 <html>
   <head>
     <title>Transition of Square to Circle</title>
     <style>
-      .rectangle {
-        width: 300px;
-        height: 120px;
+      .animation-box {
+        width: 100px;
+        height: 100px;
         background-color: grey;
         margin: 40px auto;
-        transition: all 0.5s;
+        transition: all 0.5s ease;
       }
 
-      .rectangle:hover {
-        box-shadow: 0 0 10px 5px yellowgreen;
+      .animation-box:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         border-radius: 50%;
-        background-color: maroon;
+        background-color: red;
+      }
+
+      @media screen {
+        .animation-box {
+          display: block;
+        }
+      }
+
+      @media print {
+        .animation-box {
+          display: none;
+        }
       }
     </style>
   </head>
   <body>
-    <h2 align="center">Hover Over the Grey Rectangle</h2>
-    <div class="rectangle"></div>
+    <div class="animation-box"></div>
   </body>
 </html>
