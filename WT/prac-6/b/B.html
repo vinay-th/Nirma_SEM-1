@@ -5,14 +5,14 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
       function validateForm() {
-        let ip = document.getElementById('ip').value;
-        let alpha = document.getElementById('alpha').value;
-        let date = document.getElementById('date').value;
-        let symbol = document.getElementById('symbol').value;
-        let email = document.getElementById('email').value;
-        let phone = document.getElementById('phone').value;
-        let pass = document.getElementById('pass').value;
-        let repass = document.getElementById('repass').value;
+        let ip = $('#ip').val();
+        let alpha = $('#alpha').val();
+        let date = $('#date').val();
+        let symbol = $('#symbol').val();
+        let email = $('#email').val();
+        let phone = $('#phone').val();
+        let pass = $('#pass').val();
+        let repass = $('#repass').val();
 
         if (
           ip == '' ||
@@ -71,6 +71,10 @@
         $('#alpha').on('input', function () {
           this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
         });
+
+        $('#phone').on('input', function () {
+          this.value = this.value.replace(/[^0-9]/g, '');
+        });
       });
     </script>
   </head>
@@ -80,7 +84,7 @@
     <form onsubmit="return validateForm();">
       IP Address: <input type="text" id="ip" /><br /><br />
       Alphanumeric: <input type="text" id="alpha" /><br /><br />
-      Date (DD/MM/YYYY): <input type="text" id="date" /><br /><br />
+      Date (DD/MM/YYYY): <input type="date" id="date" /><br /><br />
       No Special Symbols: <input type="text" id="symbol" /><br /><br />
       Email: <input type="text" id="email" /><br /><br />
       Phone Number: <input type="text" id="phone" /><br /><br />

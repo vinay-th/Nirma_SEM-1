@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Huffman Coding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+      :root {
+        --bg: #060a0b;
+        --ink: #ffffff;
+        --muted: #a1a1a5;
+        --dim: #727377;
+        --brand: #5865f2;
+        --brand-soft: #798df9;
+        --cyan: #00b0f4;
+        --green: #35ed7e;
+        --glass: rgba(255, 255, 255, 0.06);
+        --glass-2: rgba(255, 255, 255, 0.1);
+        --line: rgba(255, 255, 255, 0.1);
+        box-sizing: border-box;
+        color-scheme: dark;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          'Outfit',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        font-size: 16.8px;
+        line-height: 25.2px;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0 0 auto;
+        height: env(safe-area-inset-top, 0px);
+        background: var(--bg);
+        z-index: 10;
+      }
+      .mono {
+        font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+        font-weight: 500;
+      }
+      h1 {
+        font-size: 200px;
+        line-height: 60px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      @media (min-width: 768px) {
+        h1 {
+          font-size: 300px;
+          line-height: 112px;
+        }
+      }
+      .lead {
+        font-size: 18px;
+        line-height: 26px;
+        color: var(--muted);
+        max-width: 520px;
+        margin: 24px 0 0;
+      }
+      @media (min-width: 768px) {
+        .lead {
+          font-size: 20px;
+        }
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 48px;
+        padding: 0 24px;
+        border-radius: 12px;
+        border: 0;
+        font: inherit;
+        font-weight: 500;
+        color: #fff;
+        background: var(--glass-2);
+        cursor: pointer;
+        transition:
+          background 0.25s ease-in-out,
+          opacity 0.25s ease-in-out;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .btn:active {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn.primary {
+        background: var(--brand);
+      }
+      .btn.primary:hover {
+        background: #4751da;
+      }
+      .btn.primary:active {
+        background: #3e42b2;
+      }
+      .btn.icon {
+        width: 48px;
+        padding: 0;
+        border-radius: 14px;
+      }
+      :focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.6);
+      }
+      .field {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .field input {
+        flex: 1 1 280px;
+        height: 56px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: #f0f1f5;
+        font: inherit;
+        font-size: 16.8px;
+        padding: 0 20px;
+        transition:
+          border-color 0.25s ease-in-out,
+          box-shadow 0.25s ease-in-out;
+      }
+      .field input::placeholder {
+        color: #999;
+      }
+      .field input:focus {
+        outline: none;
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.2);
+      }
+      .chip {
+        height: 40px;
+        padding: 0 16px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 14.7px;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+      }
+      .chip:hover {
+        color: #fff;
+        background: var(--glass);
+      }
+      .chip.on {
+        color: #fff;
+        background: rgba(88, 101, 242, 0.22);
+        border-color: var(--brand);
+      }
+      .stage {
+        position: relative;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(
+            ellipse 70% 60% at 50% 0%,
+            rgba(88, 101, 242, 0.22),
+            transparent 70%
+          ),
+          rgba(255, 255, 255, 0.03);
+        height: min(62vh, 540px);
+        min-height: 340px;
+        overflow: hidden;
+      }
+      @media (min-width: 768px) {
+        .stage {
+          border-radius: 48px;
+        }
+      }
+      .stage svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .stage .msg {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        padding: 24px;
+        text-align: center;
+      }
+      .node circle {
+        transition:
+          stroke 0.3s ease-in-out,
+          fill 0.3s ease-in-out;
+        stroke-width: 1.5;
+      }
+      .node.leaf circle {
+        fill: rgba(88, 101, 242, 0.2);
+        stroke: var(--brand);
+      }
+      .node.inner circle {
+        fill: rgba(255, 255, 255, 0.06);
+        stroke: rgba(255, 255, 255, 0.3);
+      }
+      .node.h1 circle {
+        stroke: var(--green);
+        fill: rgba(53, 237, 126, 0.18);
+      }
+      .node.h2 circle {
+        stroke: var(--cyan);
+        fill: rgba(0, 176, 244, 0.16);
+      }
+      .node.hl circle {
+        stroke: var(--green);
+      }
+      .node text {
+        text-anchor: middle;
+        fill: #fff;
+        pointer-events: none;
+      }
+      .node .c {
+        font-size: 19px;
+        font-weight: 600;
+      }
+      .node .w {
+        font-size: 12px;
+        fill: var(--muted);
+        font-weight: 500;
+      }
+      .node .k {
+        font-size: 12px;
+        fill: var(--green);
+      }
+      .node.inner .c {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .edge {
+        fill: none;
+        stroke: rgba(121, 141, 249, 0.55);
+        stroke-width: 1.5;
+        transition: stroke 0.3s ease-in-out;
+      }
+      .edge.hl {
+        stroke: var(--green);
+        stroke-width: 2.5;
+      }
+      .lbl {
+        font-size: 12px;
+        fill: var(--brand-soft);
+        text-anchor: middle;
+        paint-order: stroke;
+        stroke: #0a0f12;
+        stroke-width: 5px;
+        stroke-linejoin: round;
+      }
+      .steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+      .step {
+        height: 40px;
+        padding: 0 16px;
+        border-radius: 14px;
+        border: 0;
+        background: var(--glass);
+        color: var(--dim);
+        font: inherit;
+        font-size: 14.7px;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.25s ease-in-out,
+          color 0.25s ease-in-out;
+      }
+      .step:hover {
+        background: var(--glass-2);
+        color: #fff;
+      }
+      .step.done {
+        color: var(--muted);
+      }
+      .step.now {
+        background: var(--brand);
+        color: #fff;
+      }
+      .panel {
+        border-radius: 16px;
+        background: var(--glass);
+        padding: 24px;
+        transition: background 0.3s ease-in-out;
+      }
+      @media (min-width: 768px) {
+        .panel {
+          border-radius: 48px;
+          padding: 40px;
+        }
+      }
+      .panel h2 {
+        font-size: 22px;
+        line-height: 26px;
+        font-weight: 700;
+        margin: 0 0 4px;
+      }
+      .panel .sub {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+        margin: 0 0 24px;
+      }
+      .fade {
+        opacity: 0.28;
+        transition: opacity 0.5s ease-in-out;
+      }
+      .fade.on {
+        opacity: 1;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 40px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 8px;
+        border-radius: 12px;
+        transition: background 0.25s ease-in-out;
+      }
+      .fade.on .row {
+        cursor: default;
+      }
+      .fade.on .row:hover {
+        background: var(--glass-2);
+      }
+      .glyph {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(88, 101, 242, 0.2);
+        font-weight: 600;
+      }
+      .bits {
+        word-break: break-all;
+        line-height: 32px;
+        font-size: 15px;
+      }
+      .bits span {
+        opacity: 0;
+        animation: pop 0.35s ease-in-out forwards;
+        margin-right: 6px;
+        display: inline-block;
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .bar {
+        height: 12px;
+        border-radius: 999px;
+        background: var(--glass);
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        width: 0;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .big {
+        font-size: 56px;
+        line-height: 48px;
+        font-weight: 700;
+        color: var(--green);
+      }
+      #tip {
+        position: fixed;
+        z-index: 30;
+        max-width: 240px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: #202024;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 14px;
+        line-height: 20px;
+        color: #f0f1f5;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+      #tip.on {
+        opacity: 1;
+      }
+      .seg {
+        display: inline-flex;
+        padding: 4px;
+        border-radius: 14px;
+        background: var(--glass);
+        gap: 4px;
+      }
+      .seg button {
+        height: 40px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 14.7px;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+      }
+      .seg button.on {
+        background: var(--glass-2);
+        color: #fff;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      section[id] {
+        scroll-margin-top: 88px;
+      }
+      a.btn {
+        text-decoration: none;
+      }
+      .nav {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 7;
+        background: rgba(6, 10, 11, 0.89);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        color: #fff;
+        text-decoration: none;
+      }
+      .brand i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--brand);
+        box-shadow: 0 0 0 4px rgba(88, 101, 242, 0.2);
+      }
+      .links {
+        display: flex;
+        gap: 2px;
+      }
+      .links a {
+        padding: 8px 12px;
+        border-radius: 12px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14.7px;
+        font-weight: 500;
+        transition:
+          color 0.25s ease-in-out,
+          background 0.25s ease-in-out;
+      }
+      .links a:hover {
+        color: #fff;
+        background: var(--glass);
+      }
+      .links a.on {
+        color: #fff;
+        background: var(--glass-2);
+      }
+      .sec {
+        font-size: 32px;
+        line-height: 36px;
+        font-weight: 700;
+        margin: 0;
+      }
+      @media (min-width: 768px) {
+        .sec {
+          font-size: 48px;
+          line-height: 48px;
+        }
+      }
+      .card {
+        border-radius: 16px;
+        background: var(--glass);
+        padding: 24px;
+      }
+      .card h3 {
+        font-size: 16.8px;
+        line-height: 25px;
+        font-weight: 600;
+        margin: 0 0 8px;
+      }
+      .card p {
+        color: var(--muted);
+        font-size: 14.7px;
+        line-height: 22px;
+        margin: 0;
+      }
+      .tape {
+        font-size: 15px;
+        line-height: 34px;
+        word-break: break-all;
+      }
+      .tape span {
+        color: var(--dim);
+        padding: 2px 1px;
+        border-radius: 6px;
+        transition:
+          color 0.2s ease-in-out,
+          background 0.2s ease-in-out;
+      }
+      .tape span.f {
+        margin-left: 10px;
+      }
+      .tape span.c {
+        background: var(--brand);
+        color: #fff;
+      }
+      .out {
+        font-size: 28px;
+        line-height: 36px;
+        font-weight: 600;
+        min-height: 36px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: var(--green);
+      }
+      .dsvg {
+        width: 100%;
+        height: auto;
+        max-height: 440px;
+        display: block;
+      }
+      .foot {
+        border-radius: 16px;
+        background: var(--glass);
+        padding: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      @media (min-width: 768px) {
+        .foot {
+          border-radius: 48px;
+          padding: 56px;
+        }
+      }
+      .soc {
+        width: 48px;
+        padding: 0;
+        border-radius: 14px;
+      }
+      .soc:hover {
+        background: var(--brand);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .bits span {
+          animation: none;
+          opacity: 1;
+        }
+        .bar i {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="max-w-[1200px] mx-auto px-4 md:px-10 pt-12 md:pt-20 pb-24 flex flex-col gap-10 md:gap-14"
+    >
+      <header class="flex flex-row justify-between">
+        <div className="flex flex-col">
+          <h1 style="font-size: 45px; padding: 0; margin: 0">Huffman coding</h1>
+          <p class="lead">
+            Count the characters, merge the lightest pair, repeat. Watch a tree
+            grow and your text shrink.
+          </p>
+        </div>
+        <div class="flex items-center">
+          <img
+            src="https://i.postimg.cc/CLV3mSHm/5.png"
+            alt="vinay-codes"
+            style="width: 100%; max-width: 200px"
+          />
+          <img
+            src="https://i.postimg.cc/9Q0JBnSp/logo.jpg"
+            alt="logo"
+            style="width: 100%; max-width: 200px"
+          />
+        </div>
+      </header>
+
+      <section class="flex flex-col gap-5" id="visualizer" aria-label="Input">
+        <form class="field" id="form" autocomplete="off">
+          <input
+            id="inp"
+            maxlength="64"
+            placeholder="Type your own text"
+            aria-label="Text to encode"
+            spellcheck="false"
+          />
+          <button class="btn primary" type="submit">Visualize</button>
+        </form>
+        <div
+          class="flex flex-wrap gap-2"
+          id="chips"
+          aria-label="Test cases"
+        ></div>
+        <p
+          id="err"
+          class="text-[14px] leading-5"
+          style="color: #ff7a8a; min-height: 20px; margin: 0"
+        ></p>
+      </section>
+
+      <section class="stage" id="stage">
+        <svg
+          id="svg"
+          viewBox="0 0 900 400"
+          preserveAspectRatio="xMidYMid meet"
+          aria-label="Huffman tree"
+        >
+          <g id="edges"></g>
+          <g id="nodes"></g>
+        </svg>
+        <div class="msg" id="msg" style="display: flex">
+          Pick a test case or type your own text, then press Visualize.
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-6 items-center">
+        <div class="steps" id="steps"></div>
+        <div class="flex flex-wrap gap-3 items-center justify-center">
+          <button class="btn icon" id="prev" aria-label="Previous step">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </button>
+          <button class="btn primary" id="play" style="min-width: 128px">
+            Play
+          </button>
+          <button class="btn icon" id="next" aria-label="Next step">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <div class="seg" id="speed" role="group" aria-label="Speed">
+            <button data-ms="1800">Slow</button
+            ><button data-ms="1100" class="on">Normal</button
+            ><button data-ms="500">Fast</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-6 md:gap-8 lg:grid-cols-3" id="codes">
+        <article class="panel fade" id="pCodes">
+          <h2>Codes</h2>
+          <p class="sub">Hover a row to trace its path.</p>
+          <div id="codeRows" class="flex flex-col gap-1"></div>
+        </article>
+        <article class="panel fade lg:col-span-2" id="pOut">
+          <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2>Encoded</h2>
+              <p class="sub">Every character, replaced by its code.</p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="btn"
+                id="copy"
+                style="height: 40px; padding: 0 16px; font-size: 14.7px"
+              >
+                Copy bits</button
+              ><a
+                class="btn"
+                href="#decode"
+                style="height: 40px; padding: 0 16px; font-size: 14.7px"
+                >Decode</a
+              >
+            </div>
+          </div>
+          <div class="bits mono" id="bits"></div>
+          <div class="flex flex-col gap-5 mt-10">
+            <div class="flex items-end justify-between gap-6 flex-wrap">
+              <div class="big" id="saved">0%</div>
+              <div
+                class="text-right text-[14px] leading-5"
+                style="color: var(--muted)"
+              >
+                <div id="cmp">&nbsp;</div>
+                <div id="ent"></div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3">
+              <div class="bar">
+                <i id="b1" style="background: var(--dim)"></i>
+              </div>
+              <div class="bar">
+                <i id="b2" style="background: var(--brand)"></i>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+      <section id="decode" class="mt-10 md:mt-16 flex flex-col gap-8">
+        <div>
+          <h2 class="sec">Decode</h2>
+          <p class="lead">
+            Feed the bits back in. Each bit picks a branch until a leaf reveals
+            the character.
+          </p>
+        </div>
+        <div class="panel">
+          <div class="grid gap-10 lg:grid-cols-2 items-center">
+            <div class="flex flex-col gap-8">
+              <div>
+                <p class="sub" style="margin-bottom: 8px">Bit stream</p>
+                <div class="tape mono" id="tape"></div>
+              </div>
+              <div>
+                <p class="sub" style="margin-bottom: 8px">Decoded text</p>
+                <div class="out" id="out"></div>
+              </div>
+              <p
+                id="dmsg"
+                style="color: var(--muted); margin: 0; min-height: 50px"
+              ></p>
+              <div class="flex flex-wrap gap-3">
+                <button class="btn" id="dstep">Step</button>
+                <button class="btn primary" id="dplay" style="min-width: 128px">
+                  Play
+                </button>
+                <button class="btn" id="dreset">Reset</button>
+              </div>
+            </div>
+            <svg
+              id="dsvg"
+              class="dsvg"
+              viewBox="0 0 300 200"
+              aria-label="Decoding walk"
+            ></svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="learn" class="mt-10 md:mt-16 flex flex-col gap-8">
+        <div>
+          <h2 class="sec">How it works</h2>
+          <p class="lead">
+            Short codes for common characters, long codes for rare ones, and no
+            code ever starts another.
+          </p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="card">
+            <h3>Merge the lightest</h3>
+            <p>
+              The two lowest-weight nodes become siblings under a parent that
+              carries their combined weight.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Label the edges</h3>
+            <p>
+              Left branches read 0 and right branches read 1, so every leaf ends
+              up with a unique path.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Prefix-free codes</h3>
+            <p>
+              Characters live only on leaves, so decoding needs no separators
+              between codes.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Fast to build</h3>
+            <p>
+              A priority queue builds the tree in O(n log n) for n distinct
+              characters, and the result is optimal.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="max-w-[1200px] mx-auto px-4 md:px-10 pb-12">
+      <div class="foot">
+        <div>
+          <div style="font-size: 36px; line-height: 36px; font-weight: 700">
+            Huffman coding
+          </div>
+          <p class="sub" style="margin: 12px 0 0">
+            Made by <span style="color: #00b0f4">Vinay Thakor</span>. 26MCA061
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a
+            class="btn soc"
+            href="https://github.com/vinay-th"
+            target="_blank"
+            rel="noopener"
+            aria-label="GitHub"
+            ><svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+              /></svg
+          ></a>
+          <a
+            class="btn soc"
+            href="https://www.linkedin.com/in/vinay-thakor/"
+            target="_blank"
+            rel="noopener"
+            aria-label="LinkedIn"
+            ><svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+              />
+              <rect x="2" y="9" width="4" height="12" />
+              <circle cx="4" cy="4" r="2" /></svg
+          ></a>
+          <a
+            class="btn soc"
+            href="https://x.com/code_with_vinay"
+            target="_blank"
+            rel="noopener"
+            aria-label="X"
+            ><svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"
+              /></svg
+          ></a>
+          <a
+            class="btn soc"
+            href="https://instagram.com/vinay_thakor._"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram"
+            ><svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg
+          ></a>
+          <a
+            class="btn soc"
+            href="mailto:26mca061@nirmauni.ac.in"
+            aria-label="Email"
+            ><svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              />
+              <polyline points="22,6 12,13 2,6" /></svg
+          ></a>
+        </div>
+        <a class="btn" href="#top">Back to top</a>
+      </div>
+    </footer>
+    <div id="tip"></div>
+
+    <script>
+      const $ = (s) => document.querySelector(s);
+      const NS = 'http://www.w3.org/2000/svg';
+      const pal = ['#798DF9', '#00B0F4', '#35ED7E', '#5865F2'];
+      const tests = [
+        ['abracadabra', 'abracadabra'],
+        ['mississippi', 'mississippi'],
+        ['sentence', 'this is an example of a huffman tree'],
+        ['skewed', 'aaaaaaaabbbbccd'],
+        ['uniform', 'abcdefgh'],
+        ['single', 'zzzzzz'],
+      ];
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let steps = [],
+        cur = 0,
+        timer = null,
+        codes = {},
+        paths = {},
+        text = '',
+        ms = 1100,
+        hl = new Set();
+      const nodes = new Map();
+      const vb = { x: 0, y: 0, w: 900, h: 400, tx: 0, ty: 0, tw: 900, th: 400 };
+      const vis = (c) => (c === ' ' ? '␣' : c);
+      const el = (t, a = {}, p) => {
+        const e = document.createElementNS(NS, t);
+        for (const k in a) e.setAttribute(k, a[k]);
+        if (p) p.appendChild(e);
+        return e;
+      };
+
+      function build(t) {
+        let id = 0;
+        const f = new Map();
+        for (const c of t) f.set(c, (f.get(c) || 0) + 1);
+        const leaves = [...f].map(([c, w]) => ({ id: id++, c, w }));
+        const S = [];
+        S.push({
+          k: 'count',
+          forest: leaves.slice(),
+          label: 'Count',
+          tip: `Count how often each character appears: ${t.length} characters, ${leaves.length} unique.`,
+        });
+        let fo = leaves.slice().sort((a, b) => a.w - b.w || a.id - b.id);
+        S.push({
+          k: 'sort',
+          forest: fo.slice(),
+          label: 'Sort',
+          tip: 'Line the nodes up by weight. The lightest always go first.',
+        });
+        while (fo.length > 1) {
+          const a = fo[0],
+            b = fo[1],
+            p = { id: id++, w: a.w + b.w, l: a, r: b };
+          fo = fo.slice(2);
+          let i = fo.findIndex((x) => x.w > p.w);
+          if (i < 0) i = fo.length;
+          fo.splice(i, 0, p);
+          S.push({
+            k: 'merge',
+            p,
+            forest: fo.slice(),
+            label: `${a.w}+${b.w}`,
+            tip: `Join the two lightest nodes, ${a.w} and ${b.w}, under a new parent of weight ${p.w}.`,
+          });
+        }
+        const root = fo[0];
+        const cd = {},
+          ph = {};
+        (function w(n, s, pa) {
+          pa = pa.concat(n.id);
+          if (n.l === undefined) {
+            cd[n.c] = s || '0';
+            ph[n.c] = pa;
+            return;
+          }
+          w(n.l, s + '0', pa);
+          w(n.r, s + '1', pa);
+        })(root, '', []);
+        S.push({
+          k: 'codes',
+          forest: [root],
+          label: 'Codes',
+          tip: 'Walk from the root to each leaf. Left edge is 0, right edge is 1.',
+        });
+        S.push({
+          k: 'encode',
+          forest: [root],
+          label: 'Encode',
+          tip: 'Swap every character for its code. Frequent characters get shorter bits.',
+        });
+        return { S, cd, ph };
+      }
+
+      function layout(fo) {
+        const pos = new Map();
+        let x = 0,
+          md = 0;
+        const gap = 64;
+        fo.forEach((t) => {
+          (function g(n, d) {
+            md = Math.max(md, d);
+            if (n.l === undefined) {
+              pos.set(n.id, { x: x * gap, d });
+              x++;
+              return;
+            }
+            g(n.l, d + 1);
+            g(n.r, d + 1);
+            pos.set(n.id, {
+              x: (pos.get(n.l.id).x + pos.get(n.r.id).x) / 2,
+              d,
+            });
+          })(t, 0);
+          x += 0.7;
+        });
+        return { pos, w: Math.max(x - 0.7, 0) * gap, md };
+      }
+
+      function go(i, instant) {
+        if (!steps.length) return;
+        cur = Math.max(0, Math.min(steps.length - 1, i));
+        const s = steps[cur];
+        const L = layout(s.forest);
+        const set = new Map();
+        const walk = (n, par) => {
+          set.set(n.id, { n, par });
+          if (n.l) {
+            walk(n.l, n);
+            walk(n.r, n);
+          }
+        };
+        s.forest.forEach((t) => walk(t, null));
+        const codesIdx = steps.length - 2;
+        [...set.keys()]
+          .sort((a, b) => a - b)
+          .forEach((id) => {
+            const { n, par } = set.get(id);
+            const p = L.pos.get(id);
+            const tx = p.x,
+              ty = 80 + p.d * 88;
+            let e = nodes.get(id);
+            if (!e) {
+              const leaf = n.l === undefined;
+              const g = el(
+                'g',
+                { class: 'node ' + (leaf ? 'leaf' : 'inner') },
+                $('#nodes')
+              );
+              el('circle', { r: leaf ? 24 : 17 }, g);
+              const c = el('text', { y: leaf ? 7 : 5, class: 'c' }, g);
+              c.textContent = leaf ? vis(n.c) : n.w;
+              let wt = null,
+                kt = null;
+              if (leaf) {
+                wt = el('text', { y: 42, class: 'w' }, g);
+                wt.textContent = n.w;
+                kt = el('text', { y: 58, class: 'k mono' }, g);
+              }
+              let x0 = tx,
+                y0 = ty - 24;
+              if (n.l) {
+                const a = nodes.get(n.l.id),
+                  b = nodes.get(n.r.id);
+                if (a && b) {
+                  x0 = (a.x + b.x) / 2;
+                  y0 = (a.y + b.y) / 2;
+                }
+              }
+              const path = el('path', { class: 'edge' }, $('#edges'));
+              const lb = el('text', { class: 'lbl' }, $('#edges'));
+              e = { id, n, g, path, lb, kt, x: x0, y: y0, o: 0, leaf };
+              g.dataset.id = id;
+              nodes.set(id, e);
+            }
+            e.tx = tx;
+            e.ty = ty;
+            e.to = 1;
+            e.par = par ? par.id : null;
+            e.side = par ? (par.l === n ? '0' : '1') : '';
+            e.lb.textContent = e.side;
+            e.hot =
+              s.k === 'merge'
+                ? id === s.p.id
+                  ? 1
+                  : id === s.p.l.id || id === s.p.r.id
+                    ? 2
+                    : 0
+                : (s.k === 'codes' || s.k === 'encode') && !par
+                  ? 1
+                  : 0;
+            e.g.classList.toggle('h1', e.hot === 1);
+            e.g.classList.toggle('h2', e.hot === 2);
+            if (e.kt) e.kt.textContent = cur >= codesIdx ? codes[n.c] : '';
+            e.tip = n.l
+              ? `Weight ${n.w} = ${n.l.w} + ${n.r.w}`
+              : `“${vis(n.c)}” appears ${n.w}× ${cur >= codesIdx ? '· code ' + codes[n.c] : ''}`;
+            if (instant) {
+              e.x = tx;
+              e.y = ty;
+              e.o = 1;
+            }
+          });
+        nodes.forEach((e, id) => {
+          if (!set.has(id)) e.to = 0;
+        });
+        const pad = 70;
+        const w = Math.max(L.w + pad * 2, 640),
+          h = Math.max(80 + L.md * 88 + 110, 300);
+        vb.tw = w;
+        vb.th = h;
+        vb.tx = L.w / 2 - w / 2;
+        vb.ty = 0;
+        if (instant) {
+          vb.x = vb.tx;
+          vb.y = 0;
+          vb.w = w;
+          vb.h = h;
+        }
+        paintSteps();
+        paintPanels();
+      }
+
+      let last = performance.now();
+      function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        const k = reduce ? 1 : 1 - Math.exp(-dt * 6.5);
+        for (const key of ['x', 'y', 'w', 'h']) {
+          const t = vb['t' + key] !== undefined ? vb['t' + key] : vb[key];
+          vb[key] += (t - vb[key]) * k;
+        }
+        $('#svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+        nodes.forEach((e, id) => {
+          e.x += (e.tx - e.x) * k;
+          e.y += (e.ty - e.y) * k;
+          e.o += (e.to - e.o) * k;
+          e.g.setAttribute('transform', `translate(${e.x} ${e.y})`);
+          e.g.style.opacity = e.o;
+          const p = e.par !== null ? nodes.get(e.par) : null;
+          if (p && e.to === 1) {
+            const rp = p.leaf ? 24 : 17,
+              rc = e.leaf ? 24 : 17;
+            const x1 = p.x,
+              y1 = p.y + rp,
+              x2 = e.x,
+              y2 = e.y - rc,
+              m = (y1 + y2) / 2;
+            e.path.setAttribute(
+              'd',
+              `M${x1} ${y1}C${x1} ${m} ${x2} ${m} ${x2} ${y2}`
+            );
+            const o = Math.min(e.o, p.o);
+            e.path.style.opacity = o;
+            e.lb.style.opacity = o;
+            e.lb.setAttribute('x', (x1 + x2) / 2);
+            e.lb.setAttribute('y', m + 4);
+          } else {
+            e.path.style.opacity = 0;
+            e.lb.style.opacity = 0;
+          }
+          if (e.to === 0 && e.o < 0.02) {
+            e.g.remove();
+            e.path.remove();
+            e.lb.remove();
+            nodes.delete(id);
+          }
+        });
+        requestAnimationFrame(frame);
+      }
+
+      function paintSteps() {
+        const box = $('#steps');
+        if (box.children.length !== steps.length) {
+          box.innerHTML = '';
+          steps.forEach((s, i) => {
+            const b = document.createElement('button');
+            b.className = 'step';
+            b.textContent = s.label;
+            b.dataset.tip = s.tip;
+            b.onclick = () => {
+              stop();
+              go(i);
+            };
+            box.appendChild(b);
+          });
+        }
+        [...box.children].forEach((b, i) => {
+          b.classList.toggle('now', i === cur);
+          b.classList.toggle('done', i < cur);
+          b.dataset.tip = steps[i].tip;
+        });
+        $('#prev').disabled = cur === 0;
+        $('#next').disabled = cur === steps.length - 1;
+      }
+
+      function paintCodes() {
+        const box = $('#codeRows');
+        box.innerHTML = '';
+        const freq = {};
+        for (const c of text) freq[c] = (freq[c] || 0) + 1;
+        Object.keys(codes)
+          .sort(
+            (a, b) => codes[a].length - codes[b].length || freq[b] - freq[a]
+          )
+          .forEach((c) => {
+            const r = document.createElement('div');
+            r.className = 'row';
+            r.innerHTML = `<div class="glyph">${vis(c)}</div><div class="mono" style="color:var(--green);word-break:break-all">${codes[c]}</div><div style="color:var(--muted);font-size:14px">${freq[c]}× · ${codes[c].length * freq[c]} bits</div>`;
+            r.onmouseenter = () => setHl(paths[c]);
+            r.onmouseleave = () => setHl(null);
+            box.appendChild(r);
+          });
+      }
+
+      function setHl(ids) {
+        hl = new Set(ids || []);
+        nodes.forEach((e, id) => {
+          const on = hl.has(id);
+          e.g.classList.toggle('hl', on);
+          e.path.classList.toggle('hl', on);
+        });
+      }
+
+      let shownEnc = false;
+      function paintPanels() {
+        const ci = steps.length - 2,
+          ei = steps.length - 1;
+        $('#pCodes').classList.toggle('on', cur >= ci);
+        $('#pOut').classList.toggle('on', cur >= ei);
+        const orig = text.length * 8;
+        let comp = 0;
+        for (const c of text) comp += codes[c].length;
+        const on = cur >= ei;
+        if (on && !shownEnc) {
+          let i = 0;
+          $('#bits').innerHTML = [...text]
+            .map((c) => {
+              const ci2 = Object.keys(codes).indexOf(c);
+              return `<span style="color:${pal[ci2 % pal.length]};animation-delay:${reduce ? 0 : Math.min(i++ * 35, 1600)}ms">${codes[c]}</span>`;
+            })
+            .join('');
+        }
+        if (!on)
+          $('#bits').innerHTML =
+            '<span style="opacity:1;animation:none;color:var(--dim)">Reach the last step to see the bits.</span>';
+        shownEnc = on;
+        const saved = Math.max(0, Math.round((1 - comp / orig) * 100));
+        $('#saved').textContent = on ? saved + '% smaller' : '0%';
+        $('#cmp').textContent = on
+          ? `${orig} bits as ASCII, ${comp} bits with Huffman`
+          : `${orig} bits as ASCII`;
+        const fr = {};
+        for (const c of text) fr[c] = (fr[c] || 0) + 1;
+        let H = 0;
+        for (const c in fr) {
+          const q = fr[c] / text.length;
+          H -= q * Math.log2(q);
+        }
+        $('#ent').textContent = on
+          ? `Average ${(comp / text.length).toFixed(2)} bits per character, entropy ${Math.abs(H).toFixed(2)}`
+          : '';
+        $('#copy').disabled = !on;
+        $('#b1').style.width = on ? '100%' : '0';
+        $('#b2').style.width = on ? (comp / orig) * 100 + '%' : '0';
+      }
+
+      function stop() {
+        clearInterval(timer);
+        timer = null;
+        $('#play').textContent = cur === steps.length - 1 ? 'Replay' : 'Play';
+      }
+      function play() {
+        if (timer) {
+          stop();
+          return;
+        }
+        if (cur === steps.length - 1) go(0);
+        $('#play').textContent = 'Pause';
+        timer = setInterval(() => {
+          if (cur >= steps.length - 1) {
+            stop();
+            return;
+          }
+          go(cur + 1);
+          if (cur >= steps.length - 1) stop();
+        }, ms);
+      }
+
+      function load(t, autoplay) {
+        stop();
+        const err = $('#err');
+        err.textContent = '';
+        if (!t) {
+          err.textContent = 'Enter at least one character.';
+          return;
+        }
+        if (new Set(t).size > 16) {
+          err.textContent =
+            'Use up to 16 different characters so the tree stays readable.';
+          return;
+        }
+        text = t;
+        $('#msg').style.display = 'none';
+        $('#play').disabled = false;
+        const r = build(t);
+        steps = r.S;
+        codes = r.cd;
+        paths = r.ph;
+        shownEnc = false;
+        nodes.forEach((e) => {
+          e.g.remove();
+          e.path.remove();
+          e.lb.remove();
+        });
+        nodes.clear();
+        $('#steps').innerHTML = '';
+        paintCodes();
+        document
+          .querySelectorAll('.chip')
+          .forEach((c) => c.classList.toggle('on', c.dataset.t === t));
+        go(0, true);
+        decInit();
+        $('#play').textContent = 'Play';
+        if (autoplay && !reduce) setTimeout(play, 900);
+        return true;
+      }
+
+      const chips = $('#chips');
+      tests.forEach(([n, t]) => {
+        const b = document.createElement('button');
+        b.className = 'chip';
+        b.type = 'button';
+        b.textContent = n;
+        b.dataset.t = t;
+        b.dataset.tip = `“${t}”`;
+        b.onclick = () => {
+          $('#inp').value = t;
+          sel(t);
+          $('#err').textContent = '';
+        };
+        chips.appendChild(b);
+      });
+      const sel = (t) =>
+        document
+          .querySelectorAll('.chip')
+          .forEach((c) => c.classList.toggle('on', c.dataset.t === t));
+      $('#form').onsubmit = (e) => {
+        e.preventDefault();
+        if (load($('#inp').value, true))
+          $('#stage').scrollIntoView({
+            behavior: reduce ? 'auto' : 'smooth',
+            block: 'center',
+          });
+      };
+      $('#inp').oninput = (e) => sel(e.target.value);
+      $('#prev').onclick = () => {
+        stop();
+        go(cur - 1);
+      };
+      $('#next').onclick = () => {
+        stop();
+        go(cur + 1);
+      };
+      $('#play').onclick = play;
+      $('#speed').onclick = (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        ms = +b.dataset.ms;
+        [...$('#speed').children].forEach((x) =>
+          x.classList.toggle('on', x === b)
+        );
+        if (timer) {
+          stop();
+          play();
+        }
+      };
+      addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || !steps.length) return;
+        if (e.key === 'ArrowRight') {
+          stop();
+          go(cur + 1);
+        }
+        if (e.key === 'ArrowLeft') {
+          stop();
+          go(cur - 1);
+        }
+        if (e.key === ' ') {
+          e.preventDefault();
+          play();
+        }
+      });
+
+      const tip = $('#tip');
+      document.addEventListener('mouseover', (e) => {
+        const t = e.target.closest('[data-tip],.node');
+        if (!t) {
+          tip.classList.remove('on');
+          return;
+        }
+        let txt = t.dataset.tip;
+        if (t.classList.contains('node')) {
+          const n = nodes.get(+t.dataset.id);
+          txt = n && n.tip;
+        }
+        if (!txt) {
+          tip.classList.remove('on');
+          return;
+        }
+        tip.textContent = txt;
+        const r = t.getBoundingClientRect(),
+          w = tip.offsetWidth,
+          h = tip.offsetHeight;
+        let x = r.left + r.width / 2 - w / 2;
+        x = Math.max(12, Math.min(innerWidth - w - 12, x));
+        let y = r.top - h - 10;
+        if (y < 8) y = r.bottom + 10;
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+        tip.classList.add('on');
+      });
+      document.addEventListener('mouseout', (e) => {
+        if (!e.relatedTarget || !e.relatedTarget.closest('[data-tip],.node'))
+          tip.classList.remove('on');
+      });
+
+      let droot = null,
+        dbits = [],
+        dpos = 0,
+        dn = null,
+        dpath = [],
+        dout = '',
+        dtm = null;
+
+      function drawTape() {
+        $('#tape').innerHTML = dbits
+          .map(
+            (x, k) =>
+              `<span class="${(x.f ? 'f ' : '') + (k === dpos ? 'c' : '')}" style="${k < dpos ? 'color:' + x.col : ''}">${x.b}</span>`
+          )
+          .join('');
+      }
+
+      function drawDec() {
+        const svg = $('#dsvg');
+        svg.innerHTML = '';
+        const L = layout([droot]),
+          W = Math.max(L.w + 100, 260),
+          ox = (W - L.w) / 2;
+        svg.setAttribute('viewBox', `0 0 ${W} ${L.md * 88 + 130}`);
+        const on = new Set(dpath),
+          X = (p) => p.x + ox,
+          Y = (p) => 40 + p.d * 88;
+        const eg = el('g', {}, svg),
+          ng = el('g', {}, svg);
+        (function d(n) {
+          const a = L.pos.get(n.id);
+          if (n.l) {
+            [
+              [n.l, '0'],
+              [n.r, '1'],
+            ].forEach(([c, s]) => {
+              const b = L.pos.get(c.id),
+                m = (Y(a) + Y(b)) / 2;
+              el(
+                'path',
+                {
+                  d: `M${X(a)} ${Y(a) + 17}C${X(a)} ${m} ${X(b)} ${m} ${X(b)} ${Y(b) - (c.l ? 17 : 24)}`,
+                  class: 'edge' + (on.has(n.id) && on.has(c.id) ? ' hl' : ''),
+                },
+                eg
+              );
+              const t = el(
+                'text',
+                { x: (X(a) + X(b)) / 2, y: m + 4, class: 'lbl' },
+                eg
+              );
+              t.textContent = s;
+              d(c);
+            });
+          }
+          const leaf = !n.l;
+          const g = el(
+            'g',
+            {
+              class:
+                'node ' +
+                (leaf ? 'leaf' : 'inner') +
+                (n === dn ? ' h1' : on.has(n.id) ? ' hl' : ''),
+              transform: `translate(${X(a)} ${Y(a)})`,
+            },
+            ng
+          );
+          el('circle', { r: leaf ? 24 : 17 }, g);
+          const t = el('text', { y: leaf ? 7 : 5, class: 'c' }, g);
+          t.textContent = leaf ? vis(n.c) : n.w;
+          if (leaf) {
+            const k = el('text', { y: 44, class: 'k mono' }, g);
+            k.textContent = codes[n.c];
+          }
+        })(droot);
+      }
+
+      function dstop() {
+        clearInterval(dtm);
+        dtm = null;
+        $('#dplay').textContent = 'Play';
+      }
+
+      function decInit() {
+        dstop();
+        droot = steps[steps.length - 1].forest[0];
+        const keys = Object.keys(codes);
+        dbits = [];
+        [...text].forEach((c, i) =>
+          [...codes[c]].forEach((b, j) =>
+            dbits.push({
+              b,
+              f: j === 0 && i > 0,
+              col: pal[keys.indexOf(c) % pal.length],
+            })
+          )
+        );
+        dpos = 0;
+        dn = droot;
+        dpath = [droot.id];
+        dout = '';
+        $('#out').textContent = '';
+        $('#dmsg').textContent =
+          'Start at the root. Each bit picks a branch: 0 goes left, 1 goes right.';
+        ['#dstep', '#dplay', '#dreset'].forEach((s) => ($(s).disabled = false));
+        drawDec();
+        drawTape();
+      }
+
+      function dstep() {
+        if (dpos >= dbits.length) {
+          dstop();
+          return;
+        }
+        if (!dn.l) {
+          dn = droot;
+          dpath = [droot.id];
+        }
+        const b = dbits[dpos++].b;
+        if (droot.l) {
+          dn = b === '0' ? dn.l : dn.r;
+          dpath.push(dn.id);
+        }
+        let m;
+        if (!dn.l) {
+          dout += dn.c;
+          m = `Read ${b}. Reached a leaf: “${vis(dn.c)}”. Write it down and return to the root.`;
+        } else
+          m = `Read ${b}: go ${b === '0' ? 'left' : 'right'} to a node of weight ${dn.w}.`;
+        if (dpos >= dbits.length) {
+          m =
+            (dout === text
+              ? 'Done. The decoded text matches the original. '
+              : 'Done. ') + 'Reset to watch it again.';
+          dstop();
+          $('#dplay').textContent = 'Replay';
+        }
+        $('#out').textContent = dout;
+        $('#dmsg').textContent = m;
+        drawDec();
+        drawTape();
+      }
+
+      function dplay() {
+        if (dtm) {
+          dstop();
+          return;
+        }
+        if (dpos >= dbits.length) decInit();
+        $('#dplay').textContent = 'Pause';
+        dtm = setInterval(dstep, Math.max(160, ms / 2.5));
+      }
+
+      $('#dstep').onclick = () => {
+        dstop();
+        dstep();
+      };
+      $('#dplay').onclick = dplay;
+      $('#dreset').onclick = decInit;
+      $('#copy').onclick = () => {
+        const s = [...text].map((c) => codes[c]).join('');
+        const done = () => {
+          $('#copy').textContent = 'Copied';
+          setTimeout(() => ($('#copy').textContent = 'Copy bits'), 1400);
+        };
+        try {
+          navigator.clipboard.writeText(s).then(done, () => {});
+        } catch (e) {}
+      };
+
+      function idle() {
+        [
+          '#prev',
+          '#next',
+          '#play',
+          '#copy',
+          '#dstep',
+          '#dplay',
+          '#dreset',
+        ].forEach((s) => ($(s).disabled = true));
+        $('#bits').innerHTML =
+          '<span style="opacity:1;animation:none;color:var(--dim)">Press Visualize to see the bits.</span>';
+        $('#tape').innerHTML =
+          '<span style="color:var(--dim)">Press Visualize first.</span>';
+        $('#dmsg').textContent = 'The decoder walks the tree you build above.';
+      }
+
+      const secs = ['visualizer', 'codes', 'decode', 'learn'].map((id) =>
+        document.getElementById(id)
+      );
+      const io = new IntersectionObserver(
+        (es) => {
+          es.forEach((en) => {
+            if (en.isIntersecting)
+              document
+                .querySelectorAll('#links a')
+                .forEach((a) =>
+                  a.classList.toggle(
+                    'on',
+                    a.getAttribute('href') === '#' + en.target.id
+                  )
+                );
+          });
+        },
+        { rootMargin: '-35% 0px -55% 0px' }
+      );
+      secs.forEach((s) => io.observe(s));
+
+      $('#inp').value = tests[0][1];
+      sel(tests[0][1]);
+      idle();
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
