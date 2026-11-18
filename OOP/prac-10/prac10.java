@@ -1,4 +1,3 @@
-
 // Write a program in Java to copy one binary file to other using File Input
 // Stream and Output Stream classes
 import java.io.FileInputStream;

@@ -1,0 +1,47 @@
+<!-- Get hands on jQuery
+Disable the submit button until the visitor has clicked a check box.
+Blink text using jQuery.
+Hide all headings on a page when they are clicked. -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jquery Disable</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <form>
+      <h1>Welcome to the jQuery Practice Page</h1>
+      <h2>Instructions:</h2>
+      <p>
+        1. Check the box below to enable the submit button.<br />
+        2. The heading will blink every second.<br />
+        3. Click on any heading to hide it.
+      </p>
+      <input type="checkbox" id="agree" /> I agree to the terms and
+      conditions<br /><br />
+      <input type="submit" id="submitBtn" value="Submit" disabled />
+    </form>
+    <script>
+      $(document).ready(function () {
+        $('#agree').click(function () {
+          if ($(this).is(':checked')) {
+            $('#submitBtn').prop('disabled', false);
+          } else {
+            $('#submitBtn').prop('disabled', true);
+          }
+        });
+
+        setInterval(function () {
+          $('h1').fadeOut(500).fadeIn(500);
+        }, 1000);
+
+        $('h1, h2, h3, h4, h5, h6').click(function () {
+          $(this).hide();
+        });
+      });
+    </script>
+  </body>
+</html>
